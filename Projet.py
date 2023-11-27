@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.decomposition import PCA
 
 # Chemin de base pour les fichiers de données
 data_path = "./"
