@@ -17,31 +17,41 @@ df_share_of_population_with_cancer_by_age = pd.read_csv(data_path + '07 share-of
 df_disease_burden_rates_by_cancer_types = pd.read_csv(data_path + '08 disease-burden-rates-by-cancer-types.csv')
 df_cancer_deaths_rate_and_age_standardized_rate_index = pd.read_csv(data_path + '09 cancer-deaths-rate-and-age-standardized-rate-index.csv')
 
-# Chargement des données
-@st.cache
-def load_data():
-    return df_share_of_population_with_cancer
+# Structure de l'application
+st.title("Analyse des Données sur le Cancer")
 
-data = load_data()
+tab1, tab2, tab3, tab4 = st.tabs(["Page d'Accueil", "Carte Interactive Mondiale", "Analyse par Région", "Analyse Approfondie par Pays"])
 
-# Titre de l'application
-st.title('Analyse de la prévalence du cancer')
+with tab1:
+    st.header("Bienvenue dans l'Analyse des Données sur le Cancer")
+    st.write("Description de l'application et informations générales.")
 
-# Sélection de l'entité
-entity = st.multiselect('Sélectionnez l\'entité (pays ou région):', data['Entity'].unique())
+with tab2:
+    st.header("Carte Interactive Mondiale")
+    # Code pour la carte interactive
 
-# Filtre des données en fonction de l'entité sélectionnée
-filtered_data = data[data['Entity'].isin(entity)]
+with tab3:
+    st.header("Analyse par Région")
+    # Code pour l'analyse par région
 
-# Création du graphique en ligne
-if not filtered_data.empty:
-    fig, ax = plt.subplots()
-    for name, group in filtered_data.groupby('Entity'):
-        ax.plot(group['Year'], group['Prevalence - Neoplasms - Sex: Both - Age: Age-standardized (Percent)'], label=name)
-    ax.set_xlabel('Année')
-    ax.set_ylabel('Prévalence du cancer (%)')
-    ax.set_title('Tendance de la prévalence du cancer au fil du temps')
-    ax.legend()
-    st.pyplot(fig)
-else:
-    st.write('Veuillez sélectionner au moins une entité pour afficher le graphique.')
+with tab4:
+    st.header("Analyse Approfondie par Pays")
+    # Code pour l'analyse approfondie par pays
+
+
+# Fonction principale de l'app
+def main():
+    st.title("Analyse Globale des Tendances du Cancer et des Décès (1990-2019)")
+
+    st.sidebar.title("Paramètres")
+    year = st.sidebar.slider("Sélectionnez une année", 1990, 2019, 2019)
+
+    st.header("Carte Interactive Mondiale")
+    # Code pour la carte interactive ici
+
+    st.sidebar.header("À propos")
+    st.sidebar.info("Cette application est conçue pour analyser les tendances du cancer et des décès à l'échelle mondiale.")
+
+# Exécution de l'app
+if __name__ == "__main__":
+    main()
