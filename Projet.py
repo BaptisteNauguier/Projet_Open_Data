@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 # Chemin de base pour les fichiers de données
-data_path = "/Users/baptistenauguier/Desktop/M2/Cours/OpenData/Projet/Projet_Open_Data/"
+data_path = "./"
 
 # Chargement des données
 df_annual_deaths = pd.read_csv(data_path + '01 annual-number-of-deaths-by-cause.csv')
