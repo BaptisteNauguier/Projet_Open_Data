@@ -20,8 +20,7 @@ df_cancer_deaths_rate_and_age_standardized_rate_index = pd.read_csv(data_path + 
 # Chargement des données
 @st.cache
 def load_data():
-    data = pd.read_csv('D:/Cours/S3/Open data/05 share-of-population-with-cancer.csv')
-    return data
+    return df_share_of_population_with_cancer
 
 data = load_data()
 
