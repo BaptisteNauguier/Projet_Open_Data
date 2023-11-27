@@ -47,7 +47,7 @@ st.title("Analyse des Données sur le Cancer")
 tab1, tab2, tab3, tab4 = st.tabs(["Page d'Accueil", "Carte Interactive Mondiale", "Analyse par Région", "Analyse Approfondie par Pays"])
 
 # Fonction pour générer le graphique en fonction du continent sélectionné
-def plot_death_causes_by_continent(df, continent=None):
+def PlotRegion(df, continent=None):
     if continent:
         df_filtered = df[df['Continent'] == continent]
     else:
@@ -79,18 +79,16 @@ def plot_death_causes_by_continent(df, continent=None):
     st.pyplot(fig)
 
 # Fonction pour générer le graphique en fonction du continent sélectionné
-def Plot_Cancer_Type(df, continent=None):
+def PlotRegionRond(df, continent=None):
     if continent:
         df_filtered = df[df['Continent'] == continent]
     else:
         df_filtered = df[df['Continent'] == "Asia"]
 
     # Calcul des proportions
-    cols_of_interest = df_filtered.columns[4:-1]
+    cols_of_interest = df_filtered.columns[6:-1]
     df_deaths_by_continent = df_filtered.groupby('Continent')[cols_of_interest].sum()
     df_proportions = df_deaths_by_continent.div(df_deaths_by_continent.sum(axis=1), axis=0)
-    # Appliquer la fonction de nettoyage sur le DataFrame
-    df_proportions = clean_column_names(df_proportions)
 
     # Création du graphique
     fig, ax = plt.subplots(figsize=(10, 8))
@@ -141,7 +139,7 @@ with tab3:
     continent_to_filter = None if continent_choice == 'Tous' else continent_choice
     
     # Affichage du graphique
-    plot_death_causes_by_continent(df_merged, continent_to_filter)
+    PlotRegion(df_merged, continent_to_filter)
 
     st.write("Comme on peut le voir la colonne Neoplasms arrive toujours deuxième dans la cause des décès, juste après les maladies cardiovasculaires.")
     
@@ -149,8 +147,43 @@ with tab3:
     df_merged = pd.merge(df_total_cancer_deaths_by_type, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
     df_merged.drop('ISO', axis=1, inplace=True)
 
+    # Filtrage des données en fonction de l'année sélectionnée
+    df_merged = df_merged[df_merged['Year'] == year]
+
     # Affichage du graphique
-    plot_death_causes_by_continent(df_merged, continent_to_filter)
+    PlotRegion(df_merged, continent_to_filter)
+
+    # Récupère les 3 types de cancer les plus mortels
+    df_merged = pd.merge(df_total_cancer_deaths_by_type, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
+    df_merged.drop('ISO', axis=1, inplace=True)
+    #Selection du continent
+    df_Top = df_merged[df_merged['Continent'] == continent_choice]
+    # Supprime toutes les années supérieures à l'année sélectionnée
+    df_Top = df_Top[df_Top['Year'] <= year] 
+    # Supprime les 3 premières colonnes
+    df_Top = df_Top.drop(['Code', 'Entity', 'Year'], axis=1)    
+    df_Top = df_Top.groupby('Continent').sum()
+    # Appliquer la fonction de nettoyage sur le DataFrame
+    df_Top=clean_column_names(df_Top)
+    # Supprime la 1 premières colonnes
+    df_Top = df_Top.drop((df_Top.columns[0]), axis=1)
+    # Inverse les colonnes et les lignes
+    df_Top = df_Top.T
+    # Trie par ordre décroissant
+    df_Top = df_Top.sort_values(by=continent_choice, ascending=False)
+    # Affiche les 3 premières lignes
+    st.write("Les 3 types de cancer les plus mortels sont :")
+    st.write(df_Top.head(3))
+
+    # Fusion des données de mortalité avec les informations de continent
+    df_merged = pd.merge(df_cancer_death_rates_by_age, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
+    df_merged.drop('ISO', axis=1, inplace=True)
+
+    # Filtrage des données en fonction de l'année sélectionnée
+    df_merged = df_merged[df_merged['Year'] == year]
+
+    # Affichage du graphique
+    PlotRegionRond(df_merged, continent_to_filter)
 
 with tab4:
     st.header("Analyse Approfondie par Pays")
