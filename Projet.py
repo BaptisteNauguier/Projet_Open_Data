@@ -16,42 +16,32 @@ df_share_of_population_with_cancer_by_age = pd.read_csv(data_path + '07 share-of
 df_disease_burden_rates_by_cancer_types = pd.read_csv(data_path + '08 disease-burden-rates-by-cancer-types.csv')
 df_cancer_deaths_rate_and_age_standardized_rate_index = pd.read_csv(data_path + '09 cancer-deaths-rate-and-age-standardized-rate-index.csv')
 
-# Fonction pour créer un graphique linéaire
-def plot_line_chart(df, x, y, title):
-    fig = px.line(df, x=x, y=y, title=title)
-    return fig
+# Chargement des données
+@st.cache
+def load_data():
+    data = pd.read_csv('D:/Cours/S3/Open data/05 share-of-population-with-cancer.csv')
+    return data
 
-# Fonction pour créer un graphique en barres
-def plot_bar_chart(df, x, y, title):
-    fig = px.bar(df, x=x, y=y, title=title)
-    return fig
+data = load_data()
 
-# Fonction principale de l'app
-def main():
-    st.title("Analyse Globale des Tendances du Cancer et des Décès (1990-2019)")
+# Titre de l'application
+st.title('Analyse de la prévalence du cancer')
 
-    st.sidebar.title("Paramètres")
-    year = st.sidebar.slider("Sélectionnez une année", 1990, 2019, 2019)
+# Sélection de l'entité
+entity = st.multiselect('Sélectionnez l\'entité (pays ou région):', data['Entity'].unique())
 
-    # Filtrage des données par année
-    df_filtered = df_annual_deaths[df_annual_deaths['Year'] == year]
+# Filtre des données en fonction de l'entité sélectionnée
+filtered_data = data[data['Entity'].isin(entity)]
 
-    st.header("Carte Interactive Mondiale")
-    # Code pour la carte interactive ici
-
-    st.header("Graphiques et Analyses")
-    st.plotly_chart(plot_line_chart(df_filtered, 'Entity', 'Deaths', 'Mortalité par pays'))
-
-    st.header("Analyse par Type de Cancer")
-    df_cancer_filtered = df_total_cancer_deaths_by_type[df_total_cancer_deaths_by_type['Year'] == year]
-    st.plotly_chart(plot_bar_chart(df_cancer_filtered, 'Type', 'Deaths', 'Décès par type de cancer'))
-
-    st.header("Analyse Approfondie")
-    # Analyse des corrélations et autres statistiques avancées
-
-    st.sidebar.header("À propos")
-    st.sidebar.info("Cette application est conçue pour analyser les tendances du cancer et des décès à l'échelle mondiale.")
-
-# Exécution de l'app
-if __name__ == "__main__":
-    main()
+# Création du graphique en ligne
+if not filtered_data.empty:
+    fig, ax = plt.subplots()
+    for name, group in filtered_data.groupby('Entity'):
+        ax.plot(group['Year'], group['Prevalence - Neoplasms - Sex: Both - Age: Age-standardized (Percent)'], label=name)
+    ax.set_xlabel('Année')
+    ax.set_ylabel('Prévalence du cancer (%)')
+    ax.set_title('Tendance de la prévalence du cancer au fil du temps')
+    ax.legend()
+    st.pyplot(fig)
+else:
+    st.write('Veuillez sélectionner au moins une entité pour afficher le graphique.')
