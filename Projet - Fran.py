@@ -41,13 +41,18 @@ def clean_column_names(df):
     df.columns = [col.split(' - ')[1] if ' - ' in col else col for col in df.columns]
     return df
 
+def clean_column_names2(df):
+    # Extraction des noms de maladies à partir des noms de colonnes
+    df.columns = [col.split(' - ')[3] if ' - ' in col else col for col in df.columns]
+    return df
+
 # Structure de l'application
 st.title("Analyse des Données sur le Cancer")
 
 tab1, tab2, tab3, tab4 = st.tabs(["Page d'Accueil", "Carte Interactive Mondiale", "Analyse par Région", "Analyse Approfondie par Pays"])
 
 # Fonction pour générer le graphique en fonction du continent sélectionné
-def PlotRegion(df, continent=None):
+def PlotRegion(df, continent):
     if continent:
         df_filtered = df[df['Continent'] == continent]
     else:
@@ -63,7 +68,6 @@ def PlotRegion(df, continent=None):
     # Création du graphique
     fig, ax = plt.subplots(figsize=(10, 8))
     df_proportions.T.plot(kind='bar', stacked=True, ax=ax)
-    plt.title(f"Proportion des Causes de Décès {'Mondiale' if not continent else 'en ' + continent}")
     plt.ylabel('Proportion')
     plt.xlabel('Causes de Décès')
     plt.legend(title='Continent', bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -79,7 +83,7 @@ def PlotRegion(df, continent=None):
     st.pyplot(fig)
 
 # Fonction pour générer le graphique en fonction du continent sélectionné
-def PlotRegionRond(df, continent=None):
+def PlotRegionRond(df, continent):
     if continent:
         df_filtered = df[df['Continent'] == continent]
     else:
@@ -89,22 +93,13 @@ def PlotRegionRond(df, continent=None):
     cols_of_interest = df_filtered.columns[6:-1]
     df_deaths_by_continent = df_filtered.groupby('Continent')[cols_of_interest].sum()
     df_proportions = df_deaths_by_continent.div(df_deaths_by_continent.sum(axis=1), axis=0)
+    df_proportions = clean_column_names2(df_proportions)
 
-    # Création du graphique
-    fig, ax = plt.subplots(figsize=(10, 8))
-    df_proportions.T.plot(kind='bar', stacked=True, ax=ax)
-    plt.title(f"Proportion des Causes de Décès {'Mondiale' if not continent else 'en ' + continent}")
-    plt.ylabel('Proportion')
-    plt.xlabel('Causes de Décès')
-    plt.legend(title='Continent', bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.xticks(rotation=90)
-    # Ajouter les annotations de proportions en pourcentage
-    for p in ax.patches:
-        width = p.get_width()
-        height = p.get_height()
-        x, y = p.get_xy() 
-        if height > 0:  # pour éviter d'ajouter des textes sur des barres vides
-            ax.annotate(f'{height:.1%}', (x + width/2 + 0.1, y + height + 0.005), ha='center', fontsize=8)  # Taille de police réduite et format en pourcentage
+    # Création du graphique camembert
+    fig, ax = plt.subplots(figsize=(8, 8))
+    df_proportions.T.plot(kind='pie', subplots=True, ax=ax, autopct='%1.1f%%', startangle=90)
+    ax.legend(df_proportions.index, title='Continent', bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.axis('equal')  # Assure que le camembert est circulaire
     plt.tight_layout()
     st.pyplot(fig)
 
@@ -138,6 +133,7 @@ with tab3:
                                     ListCont)
     continent_to_filter = None if continent_choice == 'Tous' else continent_choice
     
+    st.write("Voici la répartition des causes de décès par continent :")
     # Affichage du graphique
     PlotRegion(df_merged, continent_to_filter)
 
@@ -150,6 +146,7 @@ with tab3:
     # Filtrage des données en fonction de l'année sélectionnée
     df_merged = df_merged[df_merged['Year'] == year]
 
+    st.write("Voici la répartition des types de cancer par continent :")
     # Affichage du graphique
     PlotRegion(df_merged, continent_to_filter)
 
@@ -182,6 +179,7 @@ with tab3:
     # Filtrage des données en fonction de l'année sélectionnée
     df_merged = df_merged[df_merged['Year'] == year]
 
+    st.write("Voici la répartition des taux de mortalité par âge par continent :")
     # Affichage du graphique
     PlotRegionRond(df_merged, continent_to_filter)
 
