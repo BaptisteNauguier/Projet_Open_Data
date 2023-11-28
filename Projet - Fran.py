@@ -117,6 +117,8 @@ with tab3:
     # Récupération de la valeur de l'année du slider
     year = st.sidebar.slider("Sélectionnez une année", 1990, 2019, 2019)
 
+
+    ## Graphique 1 : Causes de décès par continent _____________________________________________________________
     # Fusion des données de mortalité avec les informations de continent
     df_merged = pd.merge(df_annual_deaths, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
     df_merged.drop('ISO', axis=1, inplace=True)
@@ -139,6 +141,19 @@ with tab3:
 
     st.write("Comme on peut le voir la colonne Neoplasms arrive toujours deuxième dans la cause des décès, juste après les maladies cardiovasculaires.")
     
+    ## Graphique 2 : Taux de mortalité par âge par continent _____________________________________________________________
+    # Fusion des données de mortalité avec les informations de continent
+    df_merged = pd.merge(df_share_of_population_with_cancer_types, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
+    df_merged.drop('ISO', axis=1, inplace=True)
+
+    # Filtrage des données en fonction de l'année sélectionnée
+    df_merged = df_merged[df_merged['Year'] == year]
+
+    st.write("Voici la répartition des taux de mortalité par âge par continent :")
+    # Affichage du graphique
+    PlotRegion(df_merged, continent_to_filter)
+
+    ## Graphique 3 : Taux de mortalité par âge par continent _____________________________________________________________
     # Fusion des données de mortalité avec les informations de continent
     df_merged = pd.merge(df_total_cancer_deaths_by_type, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
     df_merged.drop('ISO', axis=1, inplace=True)
@@ -146,10 +161,11 @@ with tab3:
     # Filtrage des données en fonction de l'année sélectionnée
     df_merged = df_merged[df_merged['Year'] == year]
 
-    st.write("Voici la répartition des types de cancer par continent :")
+    st.write("Voici la répartition des taux de mortalité par âge par continent :")
     # Affichage du graphique
     PlotRegion(df_merged, continent_to_filter)
 
+    ## Tableau 1 : Top 3 des cancers les plus mortels par continent _____________________________________________________________
     # Récupère les 3 types de cancer les plus mortels
     df_merged = pd.merge(df_total_cancer_deaths_by_type, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
     df_merged.drop('ISO', axis=1, inplace=True)
@@ -172,6 +188,7 @@ with tab3:
     st.write("Les 3 types de cancer les plus mortels sont :")
     st.write(df_Top.head(3))
 
+    ## Graphique 5 : Taux de mortalité par âge par continent _____________________________________________________________
     # Fusion des données de mortalité avec les informations de continent
     df_merged = pd.merge(df_cancer_death_rates_by_age, df_iso_convert[['ISO', 'Continent']], left_on='Code', right_on='ISO', how='left')
     df_merged.drop('ISO', axis=1, inplace=True)
