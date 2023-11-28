@@ -136,21 +136,36 @@ def main():
     with tab1:
         st.header("Bienvenue dans l'Analyse des Données sur le Cancer")
         st.write("""
+
             Cette application offre une analyse approfondie des tendances globales du cancer et des décès associés de 1990 à 2019. 
             Elle est structurée en plusieurs sections, chacune accessible via des onglets :
 
-            **Onglet 2 : Carte Interactive Mondiale**
-            - **Fonctionnalités** : Affichage des taux de cancer et de mortalité par pays pour l'année sélectionnée.
-            - **Interactivité** : Possibilité de survoler les pays pour afficher des statistiques détaillées, telles que le nombre de cas de cancer et le taux de mortalité.
+            # description des onglets
 
-            **Onglet 3 : Analyse par Région**
-            - **Sélection** : Choix de différentes régions (Amérique, Europe, Asie, etc.) pour des visualisations et analyses spécifiques.
-            - **Visualisations** : Graphiques et tableaux récapitulatifs pour une comparaison claire entre les régions.
+            **L'onglet 2 : Carte Interactive Mondiale**
+
+            **Fonctionnalités :**
+            - Visualisation des données à travers une carte choroplèthe mondiale.
+            - Sélection d'une année spécifique via un curseur pour afficher les données correspondantes.
+            - Choix parmi différents ensembles de données (datasets) pour afficher des informations spécifiques telles que les taux de mortalité, la prévalence du cancer par âge, ou le fardeau de la maladie par types de cancer.
+
+            **Interactivité :**
+            - Les utilisateurs peuvent survoler les pays sur la carte pour voir des détails supplémentaires, comme le nombre de décès ou la prévalence du cancer pour le pays et l'année sélectionnés.
+            - Une boîte de sélection permet de choisir la variable à utiliser pour la coloration de la carte, offrant une visualisation personnalisée en fonction de la mesure choisie.
+            - En cas d'absence de données pour l'année sélectionnée, un message d'erreur informe l'utilisateur et l'invite à choisir une autre année.
+
+           **Onglet 3 : Analyse par Région**
+
+            - Sélection : Choix d'une régions (Amérique, Europe, Asie, etc.) pour des visualisations et analyses spécifiques.
+            - Visualisations : Graphiques et tableaux récapitulatifs par régions.
+            - Affichage des maladies mortelles
+            - Evolution de la moyenne de cancer
+            - Répartition personnes vivant avec des cancers
+            - Répartition mortes à cause d'un type de cancers
+            - Répartition des cancers par tranches d'age
 
             **Onglet 4 : Analyse Approfondie par Pays**
             - **Exploration** : exploration de différents dataframe avec une ACP (Analyse en Composantes Principales)
-            
-            Naviguez entre les onglets pour explorer les différentes perspectives et obtenir des insights sur la situation mondiale du cancer.
         """)
         st.subheader("Explorer les Jeux de Données")
         dataset_name = st.selectbox("Choisissez un jeu de données", 
