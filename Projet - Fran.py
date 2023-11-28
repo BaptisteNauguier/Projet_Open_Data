@@ -133,7 +133,7 @@ with tab3:
                                     ListCont)
     continent_to_filter = None if continent_choice == 'Tous' else continent_choice
     
-    st.write("Voici la répartition des causes de décès par continent :")
+    st.subheader("Répartition des maladies en "+ continent_choice)
     # Affichage du graphique
     PlotRegion(df_merged, continent_to_filter)
 
@@ -150,8 +150,7 @@ with tab3:
 
     # Moyenne de la 4ème colonne mise dans la variable Moy
     Moy = df_merged.iloc[:, 3].mean()
-    st.h
-    st.write("Répartion de la population vivant avec un cancer :")
+    st.subheader("Proportion de la population vivant avec un cancer en "+ continent_choice)
     #Supprime les 2 premières colonnes
     df_merged = df_merged.drop(['Code', 'Entity'], axis=1)
     # Supprime la dernière colonne
@@ -181,7 +180,7 @@ with tab3:
     # Filtrage des données en fonction de l'année sélectionnée
     df_merged = df_merged[df_merged['Year'] == year]
 
-    st.write("Taux de la population vivant avec un cancer par continent :")
+    st.subheader("Taux de la population vivant avec un cancer en "+ continent_choice)
     # Affichage du graphique
     PlotRegion(df_merged, continent_to_filter)
 
@@ -193,7 +192,7 @@ with tab3:
     # Filtrage des données en fonction de l'année sélectionnée
     df_merged = df_merged[df_merged['Year'] == year]
 
-    st.write("Taux de mortalité par cancer par continent :")
+    st.subheader("Taux de mortalité par cancer en "+ continent_choice)
     # Affichage du graphique
     PlotRegion(df_merged, continent_to_filter)
 
@@ -217,8 +216,9 @@ with tab3:
     # Trie par ordre décroissant
     df_Top = df_Top.sort_values(by=continent_choice, ascending=False)
     # Affiche les 3 premières lignes
-    st.write("Les 3 types de cancer les plus mortels sont :")
+    st.subheader("Top 3 des cancers les plus mortels en "+ continent_choice)
     st.write(df_Top.head(3))
+    st.write("Comme on peut le voir, le cancer du poumon est le plus mortel ne sont pas les plus commun. La prostate par exemple se soigne très bien.")
 
     ## Graphique : Taux de mortalité par âge par continent _____________________________________________________________
     # Fusion des données de mortalité avec les informations de continent
@@ -228,9 +228,10 @@ with tab3:
     # Filtrage des données en fonction de l'année sélectionnée
     df_merged = df_merged[df_merged['Year'] == year]
 
-    st.write("Voici la répartition des taux de mortalité par âge par continent :")
+    st.subheader("Taux de mortalité par âge en "+ continent_choice)
     # Affichage du graphique
     PlotRegionRond(df_merged, continent_to_filter)
+    st.write("Comme on peut le voir, le cancer est plus mortel chez les personnes âgées. Surement de pars la faiblesse du système immunitaire. Et la récupération est plus longue.")
 
 with tab4:
     st.header("Analyse Approfondie par Pays")
